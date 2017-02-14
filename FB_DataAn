@@ -1,0 +1,73 @@
+#Let us work with some FB data
+
+data <- read.csv("social_data.csv")
+names(data)
+
+
+install.packages("ggplot2")
+library("ggplot2")
+
+#What do you expect to find?
+qplot(x=dob_day,data=data)
+
+
+qplot(x=dob_day,data=data) + facet_wrap(~dob_month,ncol=3)
+
+
+#Create a histogram of friend count
+qplot(x=friend_count, data=data)
+#What do you find?
+
+#Let us limit count and then see
+qplot(x=friend_count, data=data, xlim=c(0,1000))
+
+
+#Let us look at friend count by gender
+qplot(x=friend_count, data=data, binwidth=25) + 
+  scale_x_continuous(limits=c(0,1000),breaks=seq(0,1000,50))+
+  facet_wrap(~gender)
+
+#Let us omit NA values
+qplot(x=friend_count, data=subset(data,!is.na(gender)), binwidth=25) + 
+  scale_x_continuous(limits=c(0,1000),breaks=seq(0,1000,50))+
+  facet_wrap(~gender)
+
+#Which gender has more friends by average? Is median better than mean?
+table(data$gender)
+by(data$friend_count, data$gender, summary)
+
+
+#Since how long people are using FB?
+qplot(x=tenure, data=data, binwidth=30)
+#Create in years
+qplot(x=tenure/365, data=data, binwidth=1)
+
+
+#What can we say about ages? What is min age?
+qplot(x=age, data=data, binwidth=1)
+
+#Let us transform some data. What about friend count variable? It is long tail variable. 
+summary(data$friend_count)
+
+summary(log(data$friend_count))
+
+summary(log(data$friend_count+1))
+
+qplot(x=friend_count,data=data)
+
+qplot(x=log(friend_count+1),data=data)
+
+
+#Let us now look at likes
+by(data$www_likes,data$gender,sum)
+
+
+#Box plot. How does it look? How many outliers are there?
+qplot(x=gender, y=friend_count, data=subset(data,!is.na(gender)),geom='boxplot')
+
+qplot(x=gender, y=friend_count, data=subset(data,!is.na(gender)),geom='boxplot',ylim=c(0,1000))
+
+#What about mobile devices?
+summary(data$mobile_likes)
+
+summary(data$mobile_likes>0)
